@@ -8,7 +8,7 @@
   <body>
     <h1>interactive calculator</h1>
     <div class="container">
-      <div class="display">
+      <div class="display" id='display'>
       </div>
       <div class="row">
         <div class="button number">7</div>
@@ -27,41 +27,93 @@
       </div>
       <div class="row">
         <div class="button number">0</div>
-        <div class="button operators">-</div>
-        <div class="button operators">/</div>
+        <div class="button operator">-</div>
+        <div class="button operator">/</div>
       </div>
       <div class="row">
-        <div class="button operators">CE</div>
-        <div class="button operators">+</div>
-        <div class="button operators">=</div>
+        <div class="button " id='clear'>CE</div>
+        <div class="button operator" id='addition'>+</div>
+        <div class="button " id='equals'>=</div>
       </div>
     </div>
     <script type="text/javascript">
       window.onload = function(){
         console.log('script is loaded');
       }
+      var answer = 0;
+      var arr=[];
+
       var display = function(el){
         el = el.innerHTML;
         var selector = document.getElementsByClassName('display')[0];
         selector.innerHTML += el;
       }
 
-      var doTheMaths = function (displayContents){
-        console.log(displayContents);
+      var equalsClickHandler = function(){
+        doTheMaths();
+
+      }
+      var doTheMaths = function (){
+        console.log(displaySelector.innerHTML);
       }
 
-      var clickHandler = function(){
+      var clearButtonHandler = function(){
+        console.log('you clicked the clear button');
+        displaySelector.innerHTML = 0;
+        ans = 0;
+      }
+
+      var numberClickHandler = function(){
         console.log(this.innerHTML,'has been clicked');
+
           display(this);
       };
 
+      var operatorButtonHandler = function(){
+        var operator = this.innerHTML;
+        console.log('your trying to some operations ehhh?');
+        displayOperator(operator);
+        //grab the number from the display
+        number = parseInt(displaySelector.innerHTML);
+        arr.push(number);
+
+        if (operator == '+'){
+          answer=0;
+          arr.forEach(function(x){
+            console.log(answer,'+',x,'equals')
+            answer+=x;
+          });
+          displaySelector.innerHTML = answer;
+        }
+
+
+      }
+
+      var displayOperator = function(type){
+        console.log('display the operator',type);
+      }
+
+//add event listeners to all the digit buttons
       var buttons=document.getElementsByClassName('number');
       console.log(buttons);
       console.log(buttons[0].childNodes[0]);
       for(var x=0;x<buttons.length;x++){
         console.log(buttons[x].innerText);
-        buttons[x].addEventListener('click',clickHandler,false);
+        buttons[x].addEventListener('click',numberClickHandler,false);
       }
+      var clearButtonSelector = document.getElementById('clear');
+      var equalsButtonSelector = document.getElementById('equals');
+      var displaySelector = document.getElementById('display');
+      var operatorButtonsSelector = document.getElementsByClassName('operator');
+
+      equalsButtonSelector.addEventListener('click',equalsClickHandler,false);
+      clearButtonSelector.addEventListener('click',clearButtonHandler,false);
+
+      for(var x = 0;x<operatorButtonsSelector.length;x++){
+        operatorButtonsSelector[x].addEventListener('click',operatorButtonHandler,false);
+      }
+
+
     </script>
   </body>
 </html>
