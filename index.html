@@ -39,80 +39,121 @@
     <script type="text/javascript">
       window.onload = function(){
         console.log('script is loaded');
-      }
-      var answer = 0;
-      var arr=[];
-
-      var display = function(el){
-        el = el.innerHTML;
-        var selector = document.getElementsByClassName('display')[0];
-        selector.innerHTML += el;
+        addRenderEventListeners();
+        addOperatorEventListeners();
+        addClearButtonEventListener();
       }
 
-      var equalsClickHandler = function(){
-        doTheMaths();
+      var arr = [];
+      var answer=0;
+      var operationFlag=false;
 
+      var allTheButtons = document.getElementsByClassName('button');
+      var displaySelector = document.getElementById('display');
+      var numberButtons = document.getElementsByClassName('number');
+      var operatorButtons = document.getElementsByClassName('operator');
+      var additionButtonSelector = document.getElementById('addition');
+      var clearButtonSelector = document.getElementById('clear');
+      var subtractionButtonSelector = document.getElementById('subtract');
+
+
+      console.log('All the Buttons:',allTheButtons)
+      console.log('Display:',displaySelector);
+      console.log('all the number buttons',numberButtons);
+      console.log('all the operator buttons',operatorButtons);
+
+      var render = function(el){
+        displaySelector.innerHTML += el;
       }
-      var doTheMaths = function (){
-        console.log(displaySelector.innerHTML);
+
+      var addRenderEventListeners = function(){
+        for(var x=0;x<numberButtons.length;x++){
+          numberButtons[x].addEventListener('click',function(){
+            if(operationFlag){
+              clearDisplay();
+              render(this.innerHTML);
+              operationFlag = false;
+            } else {
+            render(this.innerHTML);
+            }
+          });
+          console.log('click event added to',this);
+        }
       }
 
-      var clearButtonHandler = function(){
-        console.log('you clicked the clear button');
-        displaySelector.innerHTML = 0;
-        ans = 0;
+      var saveDisplay = function(){
+       arr.push(parseInt(displaySelector.innerHTML));
+       console.log(parseInt(displaySelector.innerHTML), ' saved');
+       console.log(arr);
       }
 
-      var numberClickHandler = function(){
-        console.log(this.innerHTML,'has been clicked');
+      var saveOperator = function(el){
+        operatorSign = el.innerHTML;
+        console.log('operator sign',operatorSign);
+      }
 
-          display(this);
+      var addOperatorEventListeners = function(){
+        for(var x=0;x<operatorButtons.length;x++){
+          operatorButtons[x].addEventListener('click',function(){
+              saveOperator(this);
+              saveDisplay();
+              clearDisplay();
+              doTheMaths();
+              if(arr.length>1){
+                render(answer);
+              }
+          });
+        }
       };
 
-      var operatorButtonHandler = function(){
-        var operator = this.innerHTML;
-        console.log('your trying to some operations ehhh?');
-        displayOperator(operator);
-        //grab the number from the display
-        number = parseInt(displaySelector.innerHTML);
-        arr.push(number);
+      var clearDisplay = function() {
+        displaySelector.innerHTML = '';
+      };
 
-        if (operator == '+'){
-          answer=0;
-          arr.forEach(function(x){
-            console.log(answer,'+',x,'equals')
-            answer+=x;
-          });
-          displaySelector.innerHTML = answer;
+      var doTheMaths = function(){
+
+        if(arr.length == 0){
+          console.log('need moarrr numbers');
+        } else {
+
+          if(operatorSign == '+'){
+            console.log('made it to the plus branch');
+            add();
+            operationFlag = true;
+          }
+          else if (operatorSign == '-') {
+            subtract();
+            console.log('subtraction branch');
+            operationFlag = true
+          }
         }
+      };
 
-
+      var subtract = function(){
+        arr.forEach(function(number){
+          answer-=number;
+        });
       }
 
-      var displayOperator = function(type){
-        console.log('display the operator',type);
+      var add = function(){
+        arr.forEach(function(number){
+          answer+=number;
+        });
+        
+        document.addEventListener('once',function(){
+          clearDisplay();
+        });
       }
 
-//add event listeners to all the digit buttons
-      var buttons=document.getElementsByClassName('number');
-      console.log(buttons);
-      console.log(buttons[0].childNodes[0]);
-      for(var x=0;x<buttons.length;x++){
-        console.log(buttons[x].innerText);
-        buttons[x].addEventListener('click',numberClickHandler,false);
-      }
-      var clearButtonSelector = document.getElementById('clear');
-      var equalsButtonSelector = document.getElementById('equals');
-      var displaySelector = document.getElementById('display');
-      var operatorButtonsSelector = document.getElementsByClassName('operator');
-
-      equalsButtonSelector.addEventListener('click',equalsClickHandler,false);
-      clearButtonSelector.addEventListener('click',clearButtonHandler,false);
-
-      for(var x = 0;x<operatorButtonsSelector.length;x++){
-        operatorButtonsSelector[x].addEventListener('click',operatorButtonHandler,false);
+      var addClearButtonEventListener = function(){
+        clearButtonSelector.addEventListener('click',clearScreen);
       }
 
+      var clearScreen = function(){
+        clearDisplay();
+        answer=0;
+        arr = [];
+      }
 
     </script>
   </body>
