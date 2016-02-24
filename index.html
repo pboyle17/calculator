@@ -33,7 +33,7 @@
       <div class="row">
         <div class="button " id='clear'>CE</div>
         <div class="button operator" id='addition'>+</div>
-        <div class="button " id='equals'>=</div>
+        <div class="button operator" id='multiplication'>*</div>
       </div>
     </div>
     <script type="text/javascript">
@@ -45,7 +45,8 @@
       }
 
       var arr = [];
-      var answer=0;
+      var answer=null;;
+      var number = null;
       var operationFlag=false;
 
       var allTheButtons = document.getElementsByClassName('button');
@@ -55,6 +56,7 @@
       var additionButtonSelector = document.getElementById('addition');
       var clearButtonSelector = document.getElementById('clear');
       var subtractionButtonSelector = document.getElementById('subtract');
+      var multiplicationButtonSelector = document.getElementById('multiplication');
 
 
       console.log('All the Buttons:',allTheButtons)
@@ -82,9 +84,9 @@
       }
 
       var saveDisplay = function(){
-       arr.push(parseInt(displaySelector.innerHTML));
+       number = parseInt(displaySelector.innerHTML);
        console.log(parseInt(displaySelector.innerHTML), ' saved');
-       console.log(arr);
+       console.log('number',number,'answer',answer);
       }
 
       var saveOperator = function(el){
@@ -95,13 +97,10 @@
       var addOperatorEventListeners = function(){
         for(var x=0;x<operatorButtons.length;x++){
           operatorButtons[x].addEventListener('click',function(){
-              saveOperator(this);
               saveDisplay();
               clearDisplay();
               doTheMaths();
-              if(arr.length>1){
-                render(answer);
-              }
+              saveOperator(this);
           });
         }
       };
@@ -112,8 +111,9 @@
 
       var doTheMaths = function(){
 
-        if(arr.length == 0){
-          console.log('need moarrr numbers');
+        if(answer == null){
+          console.log('answer is null, this is the first number of the operation');
+          answer = number;
         } else {
 
           if(operatorSign == '+'){
@@ -126,23 +126,53 @@
             console.log('subtraction branch');
             operationFlag = true
           }
+          else if(operatorSign == '/'){
+            divide();
+            console.log('division branch');
+            operationFlag = true;
+          }
+          else if (operatorSign == '*'){
+            multiply();
+            console.log('multiplication brance');
+            operationFlag = true;
+          }
         }
       };
 
       var subtract = function(){
-        arr.forEach(function(number){
-          answer-=number;
+        console.log('answer is',answer-number);
+        answer -= number
+        render(answer);
+        number = null;
+
+        document.addEventListener('once',function(){
+          clearDisplay();
         });
       }
 
       var add = function(){
-        arr.forEach(function(number){
-          answer+=number;
-        });
-        
+        console.log('answer is',answer+number);
+        answer += number
+        render(answer);
+        number = null;
+
         document.addEventListener('once',function(){
           clearDisplay();
         });
+      }
+
+      var divide = function () {
+        console.log('answer is ',answer/number);
+        answer = answer/number;
+        render(answer);
+        number = null;
+      }
+
+      var multiply = function(){
+        console.log('answer is ',answer*number);
+        answer = answer * number;
+        render(answer);
+        number = null;
       }
 
       var addClearButtonEventListener = function(){
@@ -151,8 +181,9 @@
 
       var clearScreen = function(){
         clearDisplay();
-        answer=0;
+        answer=null;
         arr = [];
+        number = null;
       }
 
     </script>
